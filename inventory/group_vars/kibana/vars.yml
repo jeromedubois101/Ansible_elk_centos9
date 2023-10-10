@@ -1,0 +1,12 @@
+## Kibana ressources needed for install
+elastic_key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+kibana_rpm_url: https://artifacts.elastic.co/downloads/kibana/kibana-8.9.1-x86_64.rpm
+## Ports to open in firewalld
+kibana_port:
+  - 5601/tcp
+## Other
+kibana_config_path: /etc/kibana/kibana.yml
+elastic_bin_path: /usr/share/elasticsearch/bin
+kibana_log_path: /var/log/kibana/kibana.log
+kibana_template: kibana.yml.j2
+

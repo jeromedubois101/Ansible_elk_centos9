@@ -1,0 +1,9 @@
+---
+- name: Include Logstash Repository Setup tasks
+  include_tasks: 01_logstash_repo_setup.yml
+
+- name: Include Logstash Installation tasks
+  include_tasks: 02_logstash_install.yml
+
+- name: Include Logstash Service Management tasks
+  include_tasks: 03_logstash_service.yml

@@ -1,0 +1,15 @@
+---
+- name: Include Initial Setup tasks
+  include_tasks: 01_initial_setup.yml
+
+- name: Include Elasticsearch Installation tasks
+  include_tasks: 02_es_install.yml
+
+- name: Include Elasticsearch Certificate tasks
+  include_tasks: 03_es_certs.yml
+
+- name: Include Certificate Distribution tasks
+  include_tasks: 04_cert_distribution.yml
+
+- name: Include Elasticsearch Finalization tasks
+  include_tasks: 05_es_final.yml

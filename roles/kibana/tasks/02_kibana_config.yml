@@ -1,0 +1,15 @@
+---
+- name: Create kibana config
+  template:
+    src: "{{ kibana_template }}"
+    dest: "{{ kibana_config_path }}"
+  notify: Restart Kibana
+
+- name: Open kibana port with firewalld
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  with_items: "{{ kibana_port }}"
+  notify: Reload Firewalld

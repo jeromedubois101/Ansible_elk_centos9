@@ -1,0 +1,59 @@
+---
+- name: Check if root CA already exists
+  stat:
+    path: /etc/elasticsearch/certs/elastic-stack-ca.p12
+  register: cert_file_stat
+  when: "'bootstrap_node' in group_names"
+
+- name: Generate root CA
+  command: "{{ elastic_bin_path }}/elasticsearch-certutil ca -s -pass '' -out /etc/elasticsearch/certs/elastic-stack-ca.p12"
+  when:
+    - "'bootstrap_node' in group_names"
+  ignore_errors: yes
+
+- name: Check if node certifcate already exists
+  stat:
+    path: /etc/elasticsearch/certs/elastic-certificates.p12
+  when: "'bootstrap_node' in group_names"
+
+- name: Generate node certificate
+  command: "{{ elastic_bin_path }}/elasticsearch-certutil cert --ca /etc/elasticsearch/certs/elastic-stack-ca.p12 -s --out /etc/elasticsearch/certs/elastic-certificates.p12 --pass jerome --ca-pass ''"
+  when: "'bootstrap_node' in group_names"
+
+- name: Deploy pass.txt file use for keystore
+  template:
+    src: "{{ pass_template_path }}"
+    dest: /etc/elasticsearch/certs/pass.txt
+    owner: root
+    group: elasticsearch
+  when: "'bootstrap_node' in group_names"
+
+- name: Set ownership and permissions on files
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: elasticsearch
+    mode: "0660"
+  with_items:
+    - /etc/elasticsearch/certs/elastic-stack-ca.p12
+    - /etc/elasticsearch/certs/elastic-certificates.p12
+  when: "'bootstrap_node' in group_names"
+
+- name: Fetch created files to deploy on other nodes
+  fetch:
+    src: "{{ item }}"
+    dest: files/
+    flat: yes
+  with_items:
+    - "{{ elastic_cert_path }}/elastic-stack-ca.p12"
+    - "{{ elastic_cert_path }}/elastic-certificates.p12"
+    - "{{ elastic_cert_path }}/pass.txt"
+  when: "'bootstrap_node' in group_names"
+
+- name: Configure keystore password
+  shell: "{{ elastic_bin_path }}/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -s -f -x < /etc/elasticsearch/certs/pass.txt"
+  when: "'bootstrap_node' in group_names"
+
+- name: Configure truststore password
+  shell: "{{ elastic_bin_path }}/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -s -f -x < /etc/elasticsearch/certs/pass.txt"
+  when: "'bootstrap_node' in group_names"

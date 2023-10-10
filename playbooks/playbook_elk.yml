@@ -1,0 +1,18 @@
+---
+- hosts: elasticsearch
+  gather_facts: yes
+  become: yes
+  roles:
+    - elasticsearch
+
+- hosts: kibana
+  gather_facts: yes
+  become: yes
+  roles:
+    - kibana
+
+- hosts: logstash
+  gather_facts: yes
+  become: yes
+  roles:
+    - logstash

@@ -1,0 +1,49 @@
+---
+- name: Import GPG Key
+  rpm_key:
+    state: present
+    key: "{{ elastic_key_url }}"
+  when: services['elasticsearch.service'] is not defined
+
+- name: Download Elasticsearch rpm
+  get_url:
+    url: "{{ elastic_rpm_url }}"
+    dest: /tmp/elasticsearch.rpm
+  when: services['elasticsearch.service'] is not defined
+
+## TODO : Verify checksum
+- name: Install Elasticsearch
+  yum:
+    name: /tmp/elasticsearch.rpm
+    state: present
+  when: services['elasticsearch.service'] is not defined
+
+- name: Reset Crypto Policies to DEFAULT
+  command: update-crypto-policies --set DEFAULT
+
+- name: Deploy elastic config
+  template:
+    src: "{{ elastic_config_template }}"
+    dest: "{{ elastic_config_path }}"
+    backup: yes
+
+- name: Open elasticsearch ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  with_items: "{{ elasticsearch_port }}"
+  notify: Reload Firewalld
+
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Elasticsearch
+  systemd:
+    name: elasticsearch.service
+    enabled: yes

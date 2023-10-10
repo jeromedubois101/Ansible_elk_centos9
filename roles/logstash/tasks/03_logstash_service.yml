@@ -1,0 +1,5 @@
+---
+- name: Start Logstash
+  systemd:
+    name: logstash
+    state: started

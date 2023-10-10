@@ -1,0 +1,33 @@
+cluster.name: {{ cluster_name }}
+node.name: {{ node_name }}
+node.roles: {{ node_roles }}
+path:
+    data: {{ data_path }}
+    logs: {{ log_path }}
+network.host: {{ ansible_host }}
+discovery.seed_hosts:
+{% for host in groups['elasticsearch'] %}
+  - "{{ hostvars[host]['ansible_host'] }}"
+{% endfor %}
+cluster.initial_master_nodes:
+{% for host in groups['all'] %}
+{%if 'master' in hostvars[host]['node_roles'] %}
+  - "{{ hostvars[host]['node_name'] }}"
+{% endif %}
+{% endfor %}
+
+xpack.security.enabled: true
+xpack.security.enrollment.enabled: true
+
+xpack.security.http.ssl:
+  enabled: true
+  keystore.path: certs/http.p12
+
+xpack.security.transport.ssl:
+  enabled: true
+  verification_mode: certificate
+  keystore.path: certs/elastic-certificates.p12
+  truststore.path: certs/elastic-certificates.p12
+
+http.host: 0.0.0.0
+transport.host: 0.0.0.0

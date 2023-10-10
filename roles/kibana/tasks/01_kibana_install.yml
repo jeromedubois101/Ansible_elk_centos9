@@ -1,0 +1,26 @@
+---
+- name: Import GPG Key
+  rpm_key:
+    state: present
+    key: "{{ elastic_key_url }}"
+
+- name: Download Kibana RPM
+  get_url:
+    url: "{{ kibana_rpm_url }}"
+    dest: /tmp/kibana.rpm
+  register: kibana_download
+
+- name: Install Kibana
+  yum:
+    name: /tmp/kibana.rpm
+    state: present
+    disable_gpg_check: true
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Kibana service
+  systemd:
+    name: kibana.service
+    enabled: yes

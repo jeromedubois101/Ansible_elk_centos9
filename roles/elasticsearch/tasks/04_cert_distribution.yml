@@ -1,0 +1,33 @@
+---
+- name: Copy certificate and pass.txt
+  copy:
+    src: "{{ item }}"
+    dest: /etc/elasticsearch/certs/
+  with_items:
+    - files/elastic-certificates.p12
+    - files/pass.txt
+  when: "'regular_nodes' in group_names"
+
+- name: Change permissions of files
+  file:
+    path: "{{ item }}"
+    owner: root
+    group: elasticsearch
+    mode: "0660"
+  with_items:
+    - "{{ elastic_cert_path }}/elastic-certificates.p12"
+    - "{{ elastic_cert_path }}/pass.txt"
+  when: "'regular_nodes' in group_names"
+
+- name: Store password for keystore
+  shell: "{{ elastic_bin_path }}/elasticsearch-keystore add xpack.security.transport.ssl.keystore.secure_password -s -f -x < /etc/elasticsearch/certs/pass.txt"
+  when: "'regular_nodes' in group_names"
+
+- name: Store password for truststore
+  shell: "{{ elastic_bin_path }}/elasticsearch-keystore add xpack.security.transport.ssl.truststore.secure_password -s -f -x < /etc/elasticsearch/certs/pass.txt"
+  when: "'regular_nodes' in group_names"
+
+- name: Remove pass.txt file
+  file:
+    path: /etc/elasticsearch/certs/pass.txt
+    state: absent

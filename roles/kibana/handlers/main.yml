@@ -1,0 +1,10 @@
+---
+- name: Restart Kibana
+  systemd:
+    name: kibana
+    state: restarted
+
+- name: Reload Firewalld
+  service:
+    name: firewalld
+    state: reloaded

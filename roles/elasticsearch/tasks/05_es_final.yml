@@ -1,0 +1,54 @@
+---
+- name: Start elastic
+  systemd:
+    name: elasticsearch
+    state: started
+
+- name: Reset elastic password
+  command: "{{ elastic_bin_path }}/elasticsearch-reset-password -u elastic -b -s"
+  register: elastic_password
+  when: inventory_hostname == 'node_1'
+
+- name: Change Elasticsearch User Password
+  uri:
+    url: https://localhost:9200/_security/user/elastic/_password
+    method: POST
+    body_format: json
+    headers:
+      Content-Type: "application/json"
+    body: |
+      {
+        "password": "{{ elastic_pass }}"
+      }
+    status_code: 200
+    validate_certs: no
+    user: elastic
+    password: "{{ elastic_password.stdout_lines[0] }}"
+  when: inventory_hostname == 'node_1'
+
+- name: Check Elasticsearch cluster state
+  uri:
+    url: https://localhost:9200/_cluster/health
+    method: GET
+    validate_certs: no
+    user: elastic
+    password: "{{ elastic_pass }}"
+  register: cluster_state
+
+- name: Debug var
+  debug:
+    var: cluster_state.json.status
+
+- name: Comment initial_master_nodes
+  replace:
+    path: "{{ elastic_config_path }}"
+    regexp: '^cluster\.initial_master_nodes:'
+    replace: '#cluster.initial_master_nodes:'
+  when: cluster_state.json.status == "green"
+
+- name: Comment out lines containing the node_pattern
+  replace:
+    path: "{{ elastic_config_path }}"
+    regexp: '(.*-\s"{{ node_pattern }}.*)'
+    replace: '#\1'
+  when: cluster_state.json.status == "green"

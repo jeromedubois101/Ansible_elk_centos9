@@ -1,0 +1,10 @@
+---
+- name: Import ELK GPG Key
+  rpm_key:
+    state: present
+    key: "{{ elastic_key_url }}"
+
+- name: Install repo
+  template:
+    src: "{{ logstash_repo_template }}"
+    dest: /etc/yum.repos.d/logstash.repo

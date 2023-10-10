@@ -1,0 +1,21 @@
+## Elastic ressources needed for install
+elastic_key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+elastic_rpm_url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.9.1-x86_64.rpm
+## Elasticsearch config parameters
+cluster_name: netapp
+data_path: /var/lib/elasticsearch
+log_path: /var/log/elasticsearch
+node_certificate_password: "{{ vault_node_certificate_password }}"
+## Ports to open in firewalld
+elasticsearch_port:
+  - 9200/tcp
+  - 9300/tcp
+## Other
+elastic_config_path: /etc/elasticsearch/elasticsearch.yml
+elastic_bin_path: /usr/share/elasticsearch/bin
+elastic_cert_path: /etc/elasticsearch/certs
+elastic_config_template: elasticsearch.yml.j2
+pass_template_path: pass.yml.j2 # TODO: Not use a template for this
+
+
+

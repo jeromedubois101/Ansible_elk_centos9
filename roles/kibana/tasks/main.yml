@@ -1,0 +1,9 @@
+---
+- name: Include Kibana Installation tasks
+  include_tasks: 01_kibana_install.yml
+
+- name: Include Kibana Configuration tasks
+  include_tasks: 02_kibana_config.yml
+
+- name: Include Kibana Token Generation tasks
+  include_tasks: 03_kibana_token_gen.yml

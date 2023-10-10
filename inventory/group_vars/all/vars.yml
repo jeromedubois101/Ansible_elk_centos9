@@ -1,0 +1,1 @@
+elastic_pass: "{{ vault_elastic_pass }}"

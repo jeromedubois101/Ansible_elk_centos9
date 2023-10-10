@@ -1,0 +1,15 @@
+---
+- name: Verify connectivity on nodes
+  ping:
+
+- name: Check if the operating system is CentOS Stream 9
+  assert:
+    that:
+      - "'CentOS' in ansible_distribution"
+      - "'9' in ansible_distribution_version"
+
+- name: Change crypto policy because of sha1 verification failing
+  command: update-crypto-policies --set DEFAULT:SHA1
+
+- name: Populate service facts
+  service_facts:

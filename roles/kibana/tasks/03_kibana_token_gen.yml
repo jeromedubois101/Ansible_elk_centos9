@@ -1,0 +1,9 @@
+---
+- name: Generate kibana token
+  command: "{{ elastic_bin_path }}/elasticsearch-create-enrollment-token -s kibana"
+  register: kibana_token
+
+# Use this token in the GUI to enroll Kibana with elasticsearch
+- name: Display kibana token
+  debug:
+    var: kibana_token.stdout_lines
