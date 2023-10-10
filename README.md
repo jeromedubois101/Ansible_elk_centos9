@@ -1,4 +1,4 @@
-# Install ELK on Centos 9
+# Install ELK on Centos 9 with Ansible
 
 1) Copy the repo on Ansible Control node
 2) Fill the inventory and vars
