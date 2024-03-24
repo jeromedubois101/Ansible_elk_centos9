@@ -3,16 +3,19 @@
   gather_facts: yes
   become: yes
   roles:
-    - elasticsearch
+    - name: elasticsearch
+      tags: elasticsearch
 
 - hosts: kibana
   gather_facts: yes
   become: yes
   roles:
-    - kibana
+    - name: kibana
+      tags: kibana
 
 - hosts: logstash
   gather_facts: yes
   become: yes
   roles:
-    - logstash
+    - name: logstash
+      tags: logstash

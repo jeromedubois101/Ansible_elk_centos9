@@ -2,7 +2,7 @@
 elastic_key_url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
 elastic_rpm_url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-8.9.1-x86_64.rpm
 ## Elasticsearch config parameters
-cluster_name: netapp
+cluster_name: netlogs
 data_path: /var/lib/elasticsearch
 log_path: /var/log/elasticsearch
 node_certificate_password: "{{ vault_node_certificate_password }}"

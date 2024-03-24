@@ -7,11 +7,11 @@ all:
     node_2:
       ansible_host: 192.168.1.161
       node_name: "Elk2"
-      node_roles: [data]
+      node_roles: [data, ingest]
     node_3:
       ansible_host: 192.168.1.162
       node_name: "Elk3"
-      node_roles: [data]
+      node_roles: [data, ingest]
   vars:
     # For commenting master.node line
     node_pattern: "Elk"
@@ -33,9 +33,5 @@ kibana:
     node_1:
 
 logstash:
-  hosts:
-    node_1:
-
-logstash_bind:
   hosts:
     node_1:
